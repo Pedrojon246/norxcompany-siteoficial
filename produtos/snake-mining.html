@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Norx Snake Mining — Mineração Gamificada | Norx Company</title>
+  <meta name="description" content="Norx Snake Mining é o jogo clássico da cobrinha que distribui Norxcoin reais. Ganhe criptomoedas enquanto joga.">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .snake-hero-visual {
+      position: relative;
+      width: 280px; height: 280px;
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem;
+      box-shadow: 0 0 60px rgba(201,169,97,0.2);
+      overflow: hidden;
+    }
+    .snake-hero-visual::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .snake-hero-visual .emoji { position: relative; z-index: 1; animation: float 4s ease-in-out infinite; }
+
+    .mining-bar {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    .mining-bar-label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem; color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      font-family: var(--font-mono);
+    }
+    .mining-bar-track {
+      height: 6px;
+      background: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .mining-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="product-hero">
+    <div class="product-hero-bg" style="background:radial-gradient(ellipse 60% 80% at 80% 50%, rgba(76,175,80,0.06) 0%, transparent 60%);"></div>
+    <div class="container">
+      <div class="product-hero-inner">
+        <div>
+          <span class="badge badge-testing" style="margin-bottom:1.5rem; display:inline-flex;">Em Fase de Testes</span>
+          <h1 class="section-title" style="font-size:clamp(2.5rem,5vw,4.5rem); margin-bottom:1.25rem;">Norx Snake Mining</h1>
+          <p style="font-size:1.15rem; color:var(--text-secondary); line-height:1.8; max-width:520px; margin-bottom:2.5rem;">
+            A convergência entre entretenimento e blockchain. O clássico jogo da cobrinha reimaginado como ferramenta de mineração — cada partida gera Norxcoin real para o jogador.
+          </p>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <a href="#como-funciona" class="btn btn-primary">Como Ganhar NORX</a>
+            <a href="/produtos/norxcoin.html" class="btn btn-outline">Sobre a Norxcoin</a>
+          </div>
+        </div>
+        <div class="product-logo-wrap">
+          <div class="snake-hero-visual">
+            <span class="emoji">🐍</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONCEPT -->
+  <section class="section">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center;">
+        <div>
+          <span class="section-label">O Conceito</span>
+          <h2 class="section-title">Play-to-Earn reimaginado</h2>
+          <p style="color:var(--text-secondary); line-height:1.8; margin-bottom:1.5rem;">
+            O mercado de Play-to-Earn cresceu exponencialmente, mas a maioria das soluções exige investimento inicial alto, hardware específico ou conhecimento técnico avançado.
+          </p>
+          <p style="color:var(--text-secondary); line-height:1.8; margin-bottom:1.5rem;">
+            O Norx Snake Mining democratiza a mineração gamificada. Qualquer pessoa com smartphone pode jogar, ganhar NORX e participar do ecossistema blockchain — sem custo inicial, sem equipamento, sem complicação.
+          </p>
+          <p style="color:var(--text-secondary); line-height:1.8;">
+            A mecânica é simples: quanto melhor sua performance no jogo, maior a recompensa em Norxcoin distribuída ao final de cada sessão.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+          <div class="mining-bar">
+            <div class="mining-bar-label">
+              <span>Sessão de Jogo</span>
+              <span style="color:var(--accent);">+0.85 NORX</span>
+            </div>
+            <div class="mining-bar-track"><div class="mining-bar-fill" style="width:85%;"></div></div>
+          </div>
+          <div class="mining-bar">
+            <div class="mining-bar-label">
+              <span>Bônus por Nível Alto</span>
+              <span style="color:var(--accent);">+0.40 NORX</span>
+            </div>
+            <div class="mining-bar-track"><div class="mining-bar-fill" style="width:40%;"></div></div>
+          </div>
+          <div class="mining-bar">
+            <div class="mining-bar-label">
+              <span>Bônus Sequência Diária</span>
+              <span style="color:var(--accent);">+0.20 NORX</span>
+            </div>
+            <div class="mining-bar-track"><div class="mining-bar-fill" style="width:20%;"></div></div>
+          </div>
+          <div style="background:var(--accent-dim); border:1px solid var(--border); border-radius:8px; padding:1.25rem; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.85rem; color:var(--text-muted);">Total da Sessão</span>
+            <span style="font-family:var(--font-display); font-size:1.5rem; color:var(--accent); font-weight:700;">1.45 NORX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="como-funciona" style="background:var(--bg2);">
+    <div class="container">
+      <div class="text-center" style="margin-bottom:4rem;">
+        <span class="section-label">Mecânica</span>
+        <h2 class="section-title">Como a mineração funciona?</h2>
+        <p class="section-subtitle">O Snake Mining utiliza um modelo de distribuição de tokens baseado em performance e engajamento. Transparente, auditável e justo.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card animate-on-scroll">
+          <div class="card-icon">🎮</div>
+          <h3>Jogue a Snake</h3>
+          <p>Controle a cobrinha no estilo clássico. Colete itens especiais que multiplicam suas recompensas de mineração além dos pontos tradicionais.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="card-icon">⚡</div>
+          <h3>Performance = Recompensa</h3>
+          <p>Score mais alto, tempo de jogo e sequências diárias definem o multiplicador de NORX. Quanto melhor você jogar, mais tokens você ganha.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="card-icon">🔗</div>
+          <h3>Blockchain Verificável</h3>
+          <p>Todas as distribuições de tokens são registradas na BSC. Você pode verificar cada recompensa recebida diretamente no explorador blockchain.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="card-icon">💳</div>
+          <h3>Saque via NorxPay</h3>
+          <p>Ao acumular o saldo mínimo, transfira seus NORX para a carteira NorxPay com um clique. Sem burocracia, sem espera longa.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="card-icon">🏆</div>
+          <h3>Ranking Global</h3>
+          <p>Compete com jogadores do mundo inteiro. Os tops do ranking semanal recebem bônus especiais em NORX além das recompensas regulares.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <div class="card-icon">🛡️</div>
+          <h3>Anti-Bot Nativo</h3>
+          <p>Sistema avançado de detecção de comportamento automatizado garante que apenas jogadores humanos reais recebam as recompensas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="section">
+    <div class="container">
+      <div class="feature-row reverse">
+        <div>
+          <span class="section-label">Arquitetura Técnica</span>
+          <h2 class="section-title">Por baixo do jogo</h2>
+          <p style="color:var(--text-secondary); line-height:1.8; margin-bottom:2rem;">
+            O Snake Mining não é apenas um jogo — é uma aplicação blockchain completa com smart contracts auditados que governam a distribuição automática de tokens.
+          </p>
+          <table class="spec-table">
+            <tr><td>Engine</td><td>HTML5 Canvas / WebGL</td></tr>
+            <tr><td>Plataforma</td><td>Web (Mobile-first) + App</td></tr>
+            <tr><td>Token</td><td>Norxcoin (NORX) — BEP-20</td></tr>
+            <tr><td>Smart Contract</td><td>Distribuição automática auditada</td></tr>
+            <tr><td>Anti-cheat</td><td>Server-side validation + ML</td></tr>
+            <tr><td>Saque mínimo</td><td>A definir durante beta</td></tr>
+            <tr><td>Plataformas</td><td>iOS, Android, Web</td></tr>
+            <tr><td>Status</td><td><span class="badge badge-testing">Em Fase de Testes</span></td></tr>
+          </table>
+        </div>
+        <div class="feature-visual" style="min-height:300px;">
+          <div style="text-align:center; position:relative; z-index:1;">
+            <div style="font-size:6rem; margin-bottom:1rem; animation:float 4s ease-in-out infinite;">🐍</div>
+            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent); letter-spacing:2px;">PLAY → MINE → EARN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-sm">
+    <div class="container">
+      <div style="text-align:center; padding:4rem 2rem; background:var(--surface); border:1px solid var(--border); border-radius:12px;">
+        <div style="font-size:3rem; margin-bottom:1rem;">🐍</div>
+        <h2 class="section-title" style="margin-bottom:1rem;">Em breve para todos</h2>
+        <p style="color:var(--text-secondary); max-width:500px; margin:0 auto 2rem; line-height:1.8;">
+          O Norx Snake Mining está em fase de testes beta. Em breve estará disponível gratuitamente para todos os usuários do ecossistema Norx.
+        </p>
+        <span class="badge badge-testing" style="font-size:0.82rem; padding:0.5rem 1.25rem;">Beta em andamento</span>
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
