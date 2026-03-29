@@ -41,19 +41,16 @@
     </div>
   </section>
 
-  <!-- ALL POSTS -->
+  <!-- ALL POSTS — manuais -->
   <section class="section">
     <div class="container">
       <span class="section-label" style="margin-bottom:2rem; display:block;">Todos os Posts</span>
-      <div class="grid grid-3">
+      <div class="grid grid-3" id="posts-grid">
 
         <a href="/blog/norxpay-beta.html" class="blog-card">
           <div class="blog-card-img">💳</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">NorxPay</span>
-              <span>15 Fev 2026</span>
-            </div>
+            <div class="blog-meta"><span class="tag">NorxPay</span><span>15 Fev 2026</span></div>
             <h3>NorxPay entra em fase beta: o que esperar</h3>
             <p>A carteira digital oficial da Norx inicia seus testes com grupo seleto. Conheça as funcionalidades que chegam primeiro.</p>
           </div>
@@ -62,10 +59,7 @@
         <a href="/blog/grupbuy-modelo.html" class="blog-card">
           <div class="blog-card-img">🛒</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">GrupBuy</span>
-              <span>02 Fev 2026</span>
-            </div>
+            <div class="blog-meta"><span class="tag">GrupBuy</span><span>02 Fev 2026</span></div>
             <h3>Como o GrupBuy está reinventando o comércio social no Brasil</h3>
             <p>O modelo de group buying já movimenta bilhões na Ásia. Entenda como a Norx está trazendo essa inovação para o mercado brasileiro com diferencial blockchain.</p>
           </div>
@@ -74,10 +68,7 @@
         <a href="/blog/snake-mining-intro.html" class="blog-card">
           <div class="blog-card-img">🐍</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">Snake Mining</span>
-              <span>20 Jan 2026</span>
-            </div>
+            <div class="blog-meta"><span class="tag">Snake Mining</span><span>20 Jan 2026</span></div>
             <h3>Mineração gamificada: jogando para ganhar Norxcoin</h3>
             <p>Entenda a mecânica por trás do Norx Snake Mining e como o jogo distribui tokens reais com smart contracts auditados.</p>
           </div>
@@ -86,10 +77,7 @@
         <a href="/blog/corretor-pro-financiamento.html" class="blog-card">
           <div class="blog-card-img">🏠</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">Corretor Pro</span>
-              <span>10 Jan 2026</span>
-            </div>
+            <div class="blog-meta"><span class="tag">Corretor Pro</span><span>10 Jan 2026</span></div>
             <h3>SAC vs PRICE: qual sistema de amortização apresentar ao cliente?</h3>
             <p>Guia prático para corretores — quando e como usar cada sistema de amortização para fechar mais negócios com simulações precisas.</p>
           </div>
@@ -98,10 +86,7 @@
         <a href="/blog/norx-smart-chain.html" class="blog-card">
           <div class="blog-card-img">⛓️</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">Blockchain</span>
-              <span>28 Dez 2025</span>
-            </div>
+            <div class="blog-meta"><span class="tag">Blockchain</span><span>28 Dez 2025</span></div>
             <h3>Norx Smart Chain: nossa própria blockchain está chegando</h3>
             <p>Primeiros detalhes sobre a infraestrutura blockchain proprietária da Norx — arquitetura, consenso e o que muda para o ecossistema.</p>
           </div>
@@ -110,16 +95,21 @@
         <a href="/blog/ecossistema-2026.html" class="blog-card">
           <div class="blog-card-img">🚀</div>
           <div class="blog-card-body">
-            <div class="blog-meta">
-              <span class="tag">Empresa</span>
-              <span>01 Jan 2026</span>
-            </div>
+            <div class="blog-meta"><span class="tag">Empresa</span><span>01 Jan 2026</span></div>
             <h3>Ecossistema Norx em 2026: o que vem por aí</h3>
             <p>Roadmap completo com lançamentos previstos, produtos em desenvolvimento e a visão da Norx Company para o próximo ano.</p>
           </div>
         </a>
 
       </div>
+
+      <!-- Posts automáticos — carregados via JS -->
+      <div id="auto-posts-section" style="display:none; margin-top:3rem;">
+        <div class="divider" style="margin-bottom:3rem;"></div>
+        <span class="section-label" style="margin-bottom:2rem; display:block;">Notícias do Mercado</span>
+        <div class="grid grid-3" id="auto-posts-grid"></div>
+      </div>
+
     </div>
   </section>
 
@@ -130,11 +120,69 @@
         <span class="section-label" style="margin-bottom:0.75rem; display:block;">Fique por dentro</span>
         <h2 style="font-family:var(--font-display); font-size:2rem; font-weight:700; margin-bottom:1rem;">Novidades direto no seu WhatsApp</h2>
         <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 2rem; line-height:1.8; font-size:0.95rem;">Acompanhe atualizações dos produtos, lançamentos e novidades do ecossistema Norx em primeira mão.</p>
-        <a href="#" class="btn btn-primary">Entrar na Lista de Novidades</a>
+        <a href="https://wa.me/5522997547731" target="_blank" class="btn btn-primary">Entrar na Lista de Novidades</a>
       </div>
     </div>
   </section>
 
   <script src="/js/main.js"></script>
+
+  <script>
+    // Carrega posts automáticos do registry.json gerado pelo blog-generator
+    const NICHE_ICONS = {
+      cripto:  '₿',
+      tech:    '⚡',
+      startup: '🚀',
+      imoveis: '🏠'
+    };
+    const NICHE_LABELS = {
+      cripto:  'Criptomoedas',
+      tech:    'Tecnologia',
+      startup: 'Startups',
+      imoveis: 'Imóveis'
+    };
+
+    fetch('/blog-generator/public/blog/registry.json')
+      .then(res => res.json())
+      .then(posts => {
+        if (!posts || posts.length === 0) return;
+
+        const grid    = document.getElementById('auto-posts-grid');
+        const section = document.getElementById('auto-posts-section');
+
+        posts.forEach(post => {
+          const date = post.publishedAt
+            ? new Date(post.publishedAt).toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' })
+            : '';
+          const icon  = NICHE_ICONS[post.niche]  || '📰';
+          const label = NICHE_LABELS[post.niche] || 'Notícia';
+          const excerpt = (post.paragraphs && post.paragraphs[0])
+            ? post.paragraphs[0].slice(0, 120) + '...'
+            : '';
+
+          const card = document.createElement('a');
+          card.href      = '/blog-generator/public/blog/' + post.slug + '.html';
+          card.className = 'blog-card';
+          card.innerHTML = `
+            <div class="blog-card-img">${icon}</div>
+            <div class="blog-card-body">
+              <div class="blog-meta">
+                <span class="tag">${label}</span>
+                <span>${date}</span>
+              </div>
+              <h3>${post.title}</h3>
+              <p>${excerpt}</p>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        section.style.display = 'block';
+      })
+      .catch(() => {
+        // registry.json ainda não existe ou falhou — não exibe nada, sem erro visível
+      });
+  </script>
+
 </body>
 </html>
