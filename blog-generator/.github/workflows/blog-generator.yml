@@ -1,0 +1,62 @@
+# .github/workflows/blog-generator.yml
+# Roda dia sim dia não às 8h (horário de Brasília = 11h UTC)
+
+name: Gerador de Blog Norx
+
+on:
+  schedule:
+    - cron: '0 11 */2 * *'   # todo dia par, às 11h UTC (8h Brasília)
+  workflow_dispatch:           # permite rodar manualmente pelo GitHub
+
+jobs:
+  gerar-posts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write           # precisa para fazer push dos HTMLs gerados
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: blog-generator/package-lock.json
+
+      - name: Instalar dependências
+        working-directory: blog-generator
+        run: npm ci
+
+      - name: Gerar posts
+        working-directory: blog-generator
+        run: node scripts/generate-posts.js
+
+      - name: Verificar se há arquivos novos
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "Nenhum post novo gerado."
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Novos posts encontrados!"
+          fi
+
+      - name: Commit e push dos novos posts
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name  "Norx Blog Bot"
+          git config user.email "bot@norxcompany.com.br"
+          git add -A
+          git commit -m "blog: $(date +'%Y-%m-%d') — novos posts automáticos"
+          git push
+
+      - name: Trigger deploy Vercel (opcional)
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          echo "✅ Push realizado — Vercel detecta automaticamente e publica."
