@@ -6,14 +6,14 @@
     { "source": "/produtos/grupbuy", "destination": "/produtos/grupbuy.html" },
     { "source": "/produtos/corretor-pro", "destination": "/produtos/corretor-pro.html" },
     { "source": "/produtos/snake-mining", "destination": "/produtos/snake-mining.html" },
-    { "source": "/blog", "destination": "/blog/index.html" }
+    { "source": "/blog", "destination": "/blog-generator/public/blog/index.html" },
+    { "source": "/blog/(.*)", "destination": "/blog-generator/public/blog/$1" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     },
