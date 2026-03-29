@@ -7,6 +7,7 @@
     { "source": "/produtos/corretor-pro", "destination": "/produtos/corretor-pro.html" },
     { "source": "/produtos/snake-mining", "destination": "/produtos/snake-mining.html" },
     { "source": "/blog", "destination": "/blog-generator/public/blog/index.html" },
+    { "source": "/blog/index.html", "destination": "/blog-generator/public/blog/index.html" },
     { "source": "/blog/(.*)", "destination": "/blog-generator/public/blog/$1" }
   ],
   "headers": [
