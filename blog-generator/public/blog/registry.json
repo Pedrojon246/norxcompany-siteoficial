@@ -1,5 +1,57 @@
 [
   {
+    "originalTitle": "Samsung’s Galaxy Z Fold 8 feels like the future",
+    "title": "Samsung’s Galaxy Z Fold 8 feels like the future",
+    "paragraphs": [
+      "The company has given its new wide foldable the \"Z Fold 8\" name, positioning the phone not as a widescreen oddity, but as the new normal, the default design for foldables going forward.",
+      "Rumor has it that Apple feels the same way, with a similar squat shape widely predicted for the first foldable iPhone, expected to launch in September.",
+      "Whether you want to give the credit to Apple, Samsung, or even Huawei (which got here first with the Pura X Max), I think they might be onto something.",
+      "After a week, the Z Fold 8 feels comfortable, natural, and normal, despite being the short … Read the full story at The Verge."
+    ],
+    "niche": "tech",
+    "source": "The Verge",
+    "sourceUrl": "https://www.theverge.com/tech/972387/samsung-galaxy-z-fold-8-review",
+    "publishedAt": "2026-07-29T12:22:03.000Z",
+    "intro": "Inovação não é tendência — é o motor do presente. Nosso time separou uma atualização importante do mundo da tecnologia que merece sua atenção:",
+    "opinion": "Acreditamos que a tecnologia é ferramenta, não fim. Por isso, cada produto que desenvolvemos na Norx Company tem como base resolver uma dor concreta do mercado brasileiro.",
+    "cta": "Conheça os produtos de tecnologia da Norx Company em <a href='https://norxcompany.com.br'>norxcompany.com.br</a>.",
+    "slug": "2026-07-29-samsungs-galaxy-z-fold-8-feels-like-the-future"
+  },
+  {
+    "originalTitle": "OpenAI’s rogue AI agent didn’t stop at hacking Hugging Face",
+    "title": "OpenAI’s rogue AI agent didn’t stop at hacking Hugging Face",
+    "paragraphs": [
+      "The AI agent that escaped from OpenAI and hacked developer platform Hugging Face attacked other companies as well, OpenAI revealed on Tuesday.",
+      "The update substantially widens the scope of an already concerning incident, which has alarmed industry insiders and fueled growing calls for stronger oversight on frontier AI systems.",
+      "In an update to a blog post detailing its ongoing investigation into the incident, OpenAI said the wayward AI agent attacked several \"publicly-available services\" in its efforts to reach Hugging Face.",
+      "\"This includes four accounts on four services,\" the company said, adding that the agent had found login credentials o … Read the full story at The Verge."
+    ],
+    "niche": "tech",
+    "source": "The Verge",
+    "sourceUrl": "https://www.theverge.com/ai-artificial-intelligence/972441/openai-rogue-ai-agent-hacked-more-than-hugging-face",
+    "publishedAt": "2026-07-29T11:54:29.000Z",
+    "intro": "Para uma empresa que vive de tecnologia, estar à frente das novidades é obrigação. Compartilhamos abaixo um desenvolvimento relevante do setor:",
+    "opinion": "Acreditamos que a tecnologia é ferramenta, não fim. Por isso, cada produto que desenvolvemos na Norx Company tem como base resolver uma dor concreta do mercado brasileiro.",
+    "cta": "A Norx Company desenvolve soluções tech para o mercado brasileiro. Explore nosso portfólio em <a href='https://norxcompany.com.br'>norxcompany.com.br</a>.",
+    "slug": "2026-07-29-openais-rogue-ai-agent-didnt-stop-at-hacking-hugging-face"
+  },
+  {
+    "originalTitle": "Fast Metals is treating waste with more waste to extract critical minerals",
+    "title": "Fast Metals is treating waste with more waste to extract critical minerals",
+    "paragraphs": [
+      "Aluminum production has saddled the world with billions of tons of caustic waste.",
+      "One empresa emergente has a plan to clean it up and turn a profit."
+    ],
+    "niche": "startup",
+    "source": "TechCrunch",
+    "sourceUrl": "https://techcrunch.com/2026/07/29/fast-metals-is-treating-waste-with-more-waste-to-extract-critical-minerals/",
+    "publishedAt": "2026-07-29T12:00:00.000Z",
+    "intro": "Da captação de investimento ao lançamento de produto, o mundo das startups move bilhões e inspira milhões. Nossa equipe destacou a seguinte história:",
+    "opinion": "O empreendedorismo brasileiro tem tudo para crescer mais. Fazemos parte desse movimento, desenvolvendo produtos que unem tecnologia financeira, blockchain e soluções práticas.",
+    "cta": "A Norx Company está em constante expansão. Conheça nossos produtos e faça parte do ecossistema em <a href='https://norxcompany.com.br'>norxcompany.com.br</a>.",
+    "slug": "2026-07-29-fast-metals-is-treating-waste-with-more-waste-to-extract-cri"
+  },
+  {
     "originalTitle": "FMI elogia o Pix do Banco Central do Brasil em novo relatório que destaca regulação das criptomoedas no país",
     "title": "FMI elogia o Pix do Banco Central do Brasil em contemporâneo relatório que destaca regulação das criptomoedas no país",
     "paragraphs": [
