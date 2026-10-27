@@ -6,8 +6,45 @@
   <title>Norx Company — Tecnologia & Inovação</title>
   <meta name="description" content="Norx Company: Construindo o futuro da tecnologia financeira através de inovação, automação e soluções blockchain.">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/hologram.css">
 </head>
 <body>
+
+  <!-- HOLOGRAMA · visão de tokenização imobiliária (primeira seção) -->
+  <section class="holo" id="holo" aria-label="Visão Norx: imóveis na era digital">
+    <div class="holo-fallback"></div>
+    <canvas class="holo-canvas" aria-hidden="true"></canvas>
+    <div class="holo-shade"></div>
+
+    <div class="holo-labels" aria-hidden="true">
+      <div class="holo-label" data-t="0.22" data-side="r"><span class="holo-label-line"></span><span class="holo-label-txt">Registro em blockchain<small>cada imóvel com identidade digital</small></span></div>
+      <div class="holo-label" data-t="0.52" data-side="r"><span class="holo-label-line"></span><span class="holo-label-txt">Propriedade fracionada<small>um ativo, muitas frações digitais</small></span></div>
+      <div class="holo-label" data-t="0.82" data-side="r"><span class="holo-label-line"></span><span class="holo-label-txt">Acesso sem fronteiras<small>o mercado imobiliário em qualquer tela</small></span></div>
+    </div>
+
+    <div class="holo-copy">
+      <div class="holo-eyebrow">Roadmap 2027 · Tokenização<span class="holo-hide-sm"> imobiliária</span></div>
+      <h2 class="holo-title">O imóvel entra na <em>era digital.</em></h2>
+      <p class="holo-sub">A Norx Company está construindo o caminho rumo à <strong>tokenização de imóveis</strong>: propriedade fracionada, registrada em blockchain e acessível a qualquer pessoa.</p>
+      <div class="holo-actions">
+        <a href="#ecosystem" class="btn btn-primary">Conhecer o ecossistema</a>
+        <a href="/produtos/norxcoin.html" class="btn btn-outline">Ver Norxcoin</a>
+      </div>
+      <p class="holo-disclaimer">Visão de futuro e representação ilustrativa. Não constitui oferta pública de valores mobiliários, promessa de rentabilidade ou recomendação de investimento.</p>
+    </div>
+
+    <div class="holo-hud" aria-hidden="true">
+      <div class="holo-hud-row"><span>Projeto</span><b>Norx Tower</b></div>
+      <div class="holo-hud-row"><span>Pavimentos</span><b data-hud="floors">00</b></div>
+      <div class="holo-hud-row"><span>Construção</span><b data-hud="pct">000%</b></div>
+      <div class="holo-hud-bar"><i data-hud="bar"></i></div>
+      <div class="holo-hud-status" data-hud="status">INICIALIZANDO</div>
+    </div>
+
+    <button class="holo-replay" type="button" aria-label="Reiniciar animação do prédio">↻ Reconstruir</button>
+    <a class="holo-scroll" href="#holo-next" aria-label="Rolar para baixo"><span>Role</span><i></i></a>
+  </section>
+  <div id="holo-next"></div>
 
   <!-- HERO -->
   <section class="hero">
@@ -222,5 +259,6 @@
   </section>
 
   <script src="/js/main.js"></script>
+  <script src="/js/hologram.js" defer></script>
 </body>
 </html>

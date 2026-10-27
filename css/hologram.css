@@ -1,0 +1,199 @@
+/* ════════════════════════════════════════════════════════════
+   Seção HOLOGRAMA — "O imóvel entra na era digital"
+   ════════════════════════════════════════════════════════════ */
+.holo {
+  position: relative;
+  height: 100vh; height: 100svh;
+  min-height: 640px; max-height: 1100px;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.holo-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.holo--ready .holo-canvas { opacity: 1; }
+
+/* fallback enquanto carrega / sem WebGL */
+.holo-fallback {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 50% 45% at 62% 62%, rgba(201,169,97,0.16), transparent 70%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(201,169,97,0.10), transparent 70%),
+    #050505;
+}
+
+/* escurece as bordas e garante leitura do texto */
+.holo-shade {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.45) 34%, rgba(0,0,0,0) 58%),
+    linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 26%),
+    linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 20%);
+}
+
+/* ─── Texto ─────────────────────────── */
+.holo-copy {
+  position: absolute; z-index: 3;
+  left: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
+  bottom: clamp(3.5rem, 11vh, 7rem);
+  max-width: 560px;
+}
+
+.holo-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  background: rgba(8,8,8,0.55);
+  backdrop-filter: blur(6px);
+  padding: 0.45rem 1.1rem; border-radius: 20px;
+  margin-bottom: 1.6rem;
+  animation: fadeInUp 0.9s ease 0.2s both;
+}
+.holo-eyebrow::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 10px var(--accent);
+  animation: holoBlink 1.6s ease-in-out infinite;
+}
+@keyframes holoBlink { 50% { opacity: 0.25; } }
+
+.holo-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.7rem, 6.2vw, 5.6rem);
+  font-weight: 700; line-height: 0.98; letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 1.4rem;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.8);
+  animation: fadeInUp 0.9s ease 0.45s both;
+}
+.holo-title em {
+  font-style: italic; font-weight: 600;
+  background: linear-gradient(120deg, var(--accent-light) 10%, var(--accent) 60%, #fff 110%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.holo-sub {
+  color: var(--text-secondary);
+  font-size: clamp(0.98rem, 1.5vw, 1.15rem);
+  font-weight: 300; line-height: 1.75;
+  max-width: 500px; margin-bottom: 2rem;
+  animation: fadeInUp 0.9s ease 0.7s both;
+}
+.holo-sub strong { color: var(--text); font-weight: 500; }
+
+.holo-actions {
+  display: flex; gap: 0.9rem; flex-wrap: wrap;
+  animation: fadeInUp 0.9s ease 0.95s both;
+}
+
+.holo-disclaimer {
+  margin-top: 1.6rem; max-width: 470px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem; line-height: 1.6; letter-spacing: 0.4px;
+  color: var(--text-muted);
+  animation: fadeInUp 0.9s ease 1.15s both;
+}
+
+/* ─── HUD ────────────────────────────── */
+.holo-hud {
+  position: absolute; z-index: 3;
+  bottom: 5.6rem;
+  right: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
+  width: 230px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding: 0.8rem 0.9rem 0.7rem;
+  background: linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.35));
+  backdrop-filter: blur(4px);
+  animation: fadeInUp 0.9s ease 1.2s both;
+}
+.holo-hud-row { display: flex; justify-content: space-between; margin-bottom: 0.45rem; }
+.holo-hud-row b { color: var(--accent); font-weight: 400; }
+.holo-hud-bar { height: 1px; background: rgba(201,169,97,0.18); margin: 0.7rem 0; overflow: hidden; }
+.holo-hud-bar i { display: block; height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent); transform: scaleX(0); transform-origin: left; }
+.holo-hud-status { color: var(--text-muted); font-size: 0.6rem; letter-spacing: 2px; }
+
+/* ─── Rótulos ancorados na torre ─────── */
+.holo-labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.holo-label {
+  position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity;
+}
+.holo-label::before { /* ponto na torre */
+  content: ''; position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-light); box-shadow: 0 0 12px 2px var(--accent);
+}
+.holo-label-line {
+  position: absolute; top: 0; height: 1px; width: 70px;
+  background: linear-gradient(90deg, var(--accent), rgba(201,169,97,0));
+}
+.holo-label[data-side="r"] .holo-label-line { left: 4px; }
+.holo-label[data-side="l"] .holo-label-line { right: 4px; background: linear-gradient(270deg, var(--accent), rgba(201,169,97,0)); }
+.holo-label-txt {
+  position: absolute; top: -1.9rem; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--accent-light);
+  text-shadow: 0 0 14px rgba(0,0,0,0.9);
+}
+.holo-label-txt small { display: block; margin-top: 0.15rem; color: var(--text-secondary); font-size: 0.6rem; letter-spacing: 1px; text-transform: none; font-family: var(--font-body); }
+.holo-label[data-side="r"] .holo-label-txt { left: 82px; }
+.holo-label[data-side="l"] .holo-label-txt { right: 82px; text-align: right; }
+.holo-label[data-side="l"] .holo-label-line { width: 70px; }
+
+/* ─── Controles ──────────────────────── */
+.holo-replay {
+  position: absolute; z-index: 3;
+  right: max(2rem, calc((100vw - 1200px) / 2 + 2rem)); bottom: 2.2rem;
+  background: rgba(8,8,8,0.55); backdrop-filter: blur(6px);
+  border: 1px solid var(--border); color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 2px; text-transform: uppercase;
+  padding: 0.6rem 1rem; border-radius: 20px; cursor: pointer;
+  transition: var(--transition);
+}
+.holo-replay:hover { color: var(--accent); border-color: var(--accent); }
+
+.holo-scroll {
+  position: absolute; z-index: 3; left: 50%; bottom: 0.9rem; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted); text-decoration: none;
+}
+.holo-scroll i { width: 1px; height: 26px; background: linear-gradient(var(--accent), transparent); animation: holoScroll 2s ease-in-out infinite; transform-origin: top; }
+@keyframes holoScroll { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* sem WebGL / reduzir movimento */
+.holo--nogl .holo-canvas { display: none; }
+.holo--static .holo-eyebrow, .holo--static .holo-title, .holo--static .holo-sub,
+.holo--static .holo-actions, .holo--static .holo-disclaimer, .holo--static .holo-hud { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .holo-eyebrow, .holo-title, .holo-sub, .holo-actions, .holo-disclaimer, .holo-hud { animation: none; }
+  .holo-eyebrow::before, .holo-scroll i { animation: none; }
+}
+
+/* ─── Mobile ─────────────────────────── */
+@media (max-width: 820px) {
+  .holo { min-height: 600px; }
+  .holo-shade {
+    background:
+      linear-gradient(0deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.75) 28%, rgba(0,0,0,0) 56%),
+      linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 18%);
+  }
+  .holo-copy { left: 1.4rem; right: 1.4rem; bottom: 4.2rem; max-width: none; }
+  .holo-eyebrow { font-size: 0.62rem; letter-spacing: 2px; padding: 0.4rem 0.9rem; margin-bottom: 1rem; }
+  .holo-title { font-size: clamp(2.3rem, 11vw, 3.2rem); margin-bottom: 0.9rem; }
+  .holo-sub { font-size: 0.95rem; margin-bottom: 1.3rem; line-height: 1.6; }
+  .holo-disclaimer { display: none; }
+  .holo-hud, .holo-labels, .holo-replay, .holo-hide-sm { display: none; }
+  .holo-actions .btn { padding: 0.8rem 1.4rem; font-size: 0.78rem; }
+}
+
+/* botão do menu mobile (o <button> herdava o fundo padrão do navegador) */
+.hamburger { background: none; border: 0; }
