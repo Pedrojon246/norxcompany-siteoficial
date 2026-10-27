@@ -622,6 +622,28 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
   beacon.material.map = bTex; beacon.scale.setScalar(3.4);
   scene.add(beacon);
 
+
+  /* ── Anel de varredura: sobe junto com a frente de construção ─────────── */
+  const scanMat = new THREE.ShaderMaterial({
+    uniforms: { ...U, uS: { value: 0 } },
+    vertexShader: 'varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+    fragmentShader: `
+      uniform float uS, uTime; uniform vec3 uGold, uHot, uCyan; varying vec2 vP;
+      void main(){
+        float r = length(vP); float a = atan(vP.y, vP.x);
+        float ring = exp(-pow((r - 0.96) / 0.018, 2.0)) * 2.2;
+        float inner = exp(-pow((r - 0.80) / 0.008, 2.0)) * 0.7;
+        float tick = step(0.5, fract((a + uTime * 0.4) * 36.0 / 6.28318)) * exp(-pow((r - 1.04) / 0.02, 2.0));
+        float disc = smoothstep(1.0, 0.2, r) * 0.10;
+        vec3 col = mix(uGold, mix(uHot, uCyan, 0.25), 0.6) * (ring + inner + tick * 0.9) + uGold * disc;
+        gl_FragColor = vec4(col * uS, 1.0);
+      }`,
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+  });
+  const scanRing = new THREE.Mesh(new THREE.CircleGeometry(1, 96), scanMat);
+  scanRing.rotation.x = -Math.PI / 2; scanRing.renderOrder = 9; scanRing.visible = false;
+  scene.add(scanRing);
+
   /* ── Pós-processamento ────────────────────────────────────────────────── */
   const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: isMobile ? 2 : 4 });
   const composer = new EffectComposer(renderer, rt);
@@ -630,10 +652,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
   const finishPass = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uGlitch: { value: 0 }, uAspect: { value: 1 } },
+    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uGlitch: { value: 0 }, uAspect: { value: 1 }, uFlash: { value: 0 } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
     fragmentShader: `
-      uniform sampler2D tDiffuse; uniform float uTime, uGlitch; varying vec2 vUv;
+      uniform sampler2D tDiffuse; uniform float uTime, uGlitch, uFlash; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
       void main(){
         vec2 uv = vUv;
@@ -641,6 +663,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
         uv.x += (h(vec2(floor(uv.y * 38.0), uTime)) - 0.5) * 0.045 * uGlitch * band;
         vec2 c = uv - 0.5; float ab = 0.0008 + 0.003 * dot(c, c) + uGlitch * 0.004;
         vec3 col = vec3(texture2D(tDiffuse, uv + c * ab).r, texture2D(tDiffuse, uv).g, texture2D(tDiffuse, uv - c * ab).b);
+        col += vec3(1.0, 0.82, 0.5) * uFlash * (1.0 - dot(c, c) * 2.2);
         col *= 1.0 - dot(c, c) * 1.05;
         col += (h(uv * 900.0 + uTime) - 0.5) * 0.022;
         gl_FragColor = vec4(col, 1.0);
@@ -676,48 +699,75 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
     const th = 0.0; const p = [0, 0, 0]; gridPos(TW, t, th, p); return _v.set(p[0], p[1], p[2]);
   }
 
-  /* ── Linha do tempo ───────────────────────────────────────────────────── */
+  /* ── Linha do tempo (t = tempo de obra, controlado pela rolagem) ───────── */
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const sm = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
   const easeIO = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const T = { crack0: 0.25, tower0: 1.0, towerDur: 7.0, city0: 4.0, done: 8.6 };
+  const T_END = T.done + 1.0;     // fim da obra (p = 1)
+  const INTRO = 1.6;              // abertura que toca sozinha ao carregar (chão racha, feixe acende)
 
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
   window.addEventListener('pointermove', e => { mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
-  let scrollK = 0;
-  window.addEventListener('scroll', () => { scrollK = clamp(window.scrollY / Math.max(1, root.offsetHeight)); }, { passive: true });
+
+  const runway = document.getElementById('holo-runway') || root;
+  const copyEl = root.querySelector('.holo-copy');
+  const hintEl = root.querySelector('.holo-scroll');
+  const hudEl = root.querySelector('.holo-hud');
+  const shadeEl = root.querySelector('.holo-shade');
+  function progress() {
+    const r = runway.getBoundingClientRect();
+    return clamp(-r.top / Math.max(1, r.height - innerHeight));
+  }
+  // texto some enquanto o prédio sobe e volta (com os botões) quando a obra termina
+  function applyScrollUI(p) {
+    const co = p < 0.03 ? 1 : p < 0.13 ? 1 - (p - 0.03) / 0.10 : p < 0.88 ? 0 : (p - 0.88) / 0.08;
+    const o = clamp(co);
+    if (copyEl) { copyEl.style.opacity = o.toFixed(3); copyEl.style.transform = 'translateY(' + ((1 - o) * 26).toFixed(1) + 'px)'; copyEl.style.pointerEvents = o > 0.6 ? 'auto' : 'none'; }
+    if (shadeEl) shadeEl.style.opacity = (0.22 + 0.78 * o).toFixed(3);
+    if (hintEl) hintEl.style.opacity = (1 - sm(0.0, 0.06, p)).toFixed(3);
+    if (hudEl) hudEl.style.opacity = sm(0.04, 0.12, p).toFixed(3);
+  }
 
   const hudFloors = root.querySelector('[data-hud="floors"]');
   const hudPct = root.querySelector('[data-hud="pct"]');
   const hudStatus = root.querySelector('[data-hud="status"]');
   const hudBar = root.querySelector('[data-hud="bar"]');
-  let lastPct = -1;
+  let lastPct = -1, spin = 0;
 
   const camPos = new THREE.Vector3(), camTgt = new THREE.Vector3();
-  function update(t, dt) {
-    U.uTime.value = t;
+  function update(t, dt, tr) {
+    if (tr === undefined) tr = t;
+    U.uTime.value = tr;
 
-    // chão / feixe / estilhaços
-    const crack = sm(T.crack0, T.crack0 + 1.6, t);
-    groundMat.uniforms.uCrack.value = crack;
-    groundMat.uniforms.uRing.value = t > 0.5 ? (t - 0.5) * 15.0 : 0;
+    // chão / feixe / estilhaços (poeira e onda de choque tocam no relógio real; rachaduras seguem a obra)
+    groundMat.uniforms.uCrack.value = sm(T.crack0, T.crack0 + 1.6, t);
+    groundMat.uniforms.uRing.value = tr > 0.5 ? (tr - 0.5) * 15.0 : 0;
     groundMat.uniforms.uGlow.value = 1.0 - 0.55 * sm(T.done - 1.5, T.done + 2, t);
     groundMat.uniforms.uPlat.value = sm(1.2, 3.2, t);
-    groundMat.uniforms.uGrid.value = sm(2.4, 6.4, t);
-    burst.material.uniforms.uT.value = t > 0.55 ? t - 0.55 : -1;
+    groundMat.uniforms.uGrid.value = sm(1.6, 6.4, t);
+    burst.material.uniforms.uT.value = tr > 0.55 ? tr - 0.55 : -1;
     const rise = sm(T.tower0 - 0.4, T.tower0 + 0.6, t);
-    const beamI = rise * (0.6 - 0.5 * sm(T.tower0 + T.towerDur * 0.5, T.done + 1.0, t)) + 0.0;
+    const beamI = rise * (0.65 - 0.55 * sm(T.tower0 + T.towerDur * 0.45, T.done + 1.0, t));
     beamMat.uniforms.uBeam.value = Math.max(0, beamI) * (t < 0.4 ? 0 : 1);
     dust.material.uniforms.uAmt.value = sm(0.8, 2.5, t);
 
     // torre
     const bt = clamp((t - T.tower0) / T.towerDur);
-    const e = bt < 1 ? easeIO(bt) : 1;
+    const e = bt < 1 ? bt * 0.55 + easeIO(bt) * 0.45 : 1;   // quase linear: a rolagem responde de forma uniforme
     const revealY = -2 + (FULL + 4 + 2) * e;
     U.uReveal.value = bt >= 1 ? 999 : revealY;
+    U.uLead.value = 3.2;
     U.uCity.value = Math.max(0, t - T.city0);
     const built = t > T.done;
-    U.uPulse.value = built ? ((t - T.done) * 6.5 % 46) - 8 : -99;
+    U.uPulse.value = built ? ((tr * 6.5) % 46) - 8 : -99;
+
+    // anel de varredura
+    const tt = clamp((revealY - TW.y0) / TW.h);
+    const sr = revealY < TW.y0 ? 5.6 : ringRadius(TW, tt) * 1.15 + 0.6;
+    scanRing.visible = bt > 0 && bt < 1;
+    scanRing.position.y = revealY; scanRing.scale.setScalar(sr);
+    scanMat.uniforms.uS.value = sm(0, 0.04, bt) * (1 - sm(0.94, 1, bt));
 
     // HUD
     const pct = Math.round(clamp((Math.min(revealY, TOP) - TW.y0) / TW.h) * 100);
@@ -730,44 +780,48 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
     }
 
     // órbitas
-    const oa = sm(T.done - 0.6, T.done + 1.8, t);
+    const oa = sm(T.done - 0.6, T.done + 1.4, t);
     orbit.visible = oa > 0.001;
     orbitDefs.forEach(d => { d._m.uniforms.uA.value = oa * 0.9; });
-    coins.forEach((c, i) => {
-      const a = c.phase + t * c.d.spd * 1.8;
+    coins.forEach(c => {
+      const a = c.phase + tr * c.d.spd * 1.8;
       c.sp.position.set(Math.cos(a) * c.d.r, 0, Math.sin(a) * c.d.r);
       c.sp.material.opacity = oa;
     });
     beacon.visible = revealY > FULL;
-    beacon.material.opacity = (0.55 + 0.45 * Math.sin(t * 3.0)) * sm(0, 1, revealY - FULL);
+    beacon.material.opacity = (0.55 + 0.45 * Math.sin(tr * 3.0)) * sm(0, 1, revealY - FULL);
 
-    // glitch no instante em que o prédio fecha + ocasional
-    let gl = 0;
-    if (t > T.tower0 + T.towerDur - 0.15 && t < T.tower0 + T.towerDur + 0.35) gl = 1;
-    else if (built && (Math.sin(t * 0.9) > 0.994)) gl = 0.7;
+    // clímax: o prédio fecha → glitch, clarão e "soco" de câmera
+    const tc = T.tower0 + T.towerDur;
+    const bump = Math.exp(-Math.pow((t - tc) / 0.45, 2));
+    let gl = bump > 0.25 ? 1 : 0;
+    if (built && Math.sin(tr * 0.9) > 0.994) gl = 0.7;
     finishPass.uniforms.uGlitch.value = gl;
-    finishPass.uniforms.uTime.value = t;
+    finishPass.uniforms.uTime.value = tr;
+    finishPass.uniforms.uFlash.value = bump * 0.32;
 
-    // câmera: plano baixo e próximo → recua e sobe, depois órbita lenta
-    const ck = easeIO(clamp((t - 0.2) / (T.done + 1.0)));
+    // câmera: rasteira junto ao chão → sobe acompanhando a obra → recua para o plano geral
+    const kb = clamp((t - 0.4) / (T.done + 1.2 - 0.4));
+    const ck = easeIO(kb);
     const aspect = camera.aspect;
     const D = (aspect < 0.9 ? 98 : aspect < 1.25 ? 88 : 68);
     mouse.sx += (mouse.x - mouse.sx) * Math.min(1, dt * 2.5);
     mouse.sy += (mouse.y - mouse.sy) * Math.min(1, dt * 2.5);
-    const theta = 0.62 + Math.max(0, t - T.done) * 0.035 + mouse.sx * 0.22 + scrollK * 0.7 - (1 - ck) * 0.5;
+    if (built) spin += dt * 0.035;
+    const theta = 0.62 + spin + mouse.sx * 0.22 - (1 - ck) * 1.0;
     const R0 = 26, Rk = R0 + (D - R0) * ck;
-    const camY = (3.0 + (9.5 - 3.0) * ck) + mouse.sy * -1.6 + scrollK * 6;
-    const tgtY = 5 + (13.8 - 5) * ck;
+    const camY = 1.6 + (9.5 - 1.6) * ck - mouse.sy * 1.6;
+    const follow = (1 - ck) * Math.min(Math.max(revealY, 0), FULL) * 0.34;
+    const tgtY = 4.5 + (13.8 - 4.5) * ck + follow;
     camPos.set(Math.sin(theta) * Rk, camY, Math.cos(theta) * Rk);
     camTgt.set(0, tgtY, 0);
     camera.position.copy(camPos); camera.lookAt(camTgt);
-    camera.fov = 32 + (1 - ck) * 10; camera.updateProjectionMatrix();
+    camera.fov = 32 + (1 - ck) * 14 - bump * 2.5; camera.updateProjectionMatrix();
 
     // rótulos
     camera.updateMatrixWorld();
     labels.forEach(L => {
-      const y = TW.y0 + TW.h * L.t;
-      const show = built && t > T.done + 0.4 + L.t * 0.9 && W > 820;
+      const show = built && t > T.done + 0.25 + L.t * 0.7 && W > 820;
       L.vis += ((show ? 1 : 0) - L.vis) * Math.min(1, dt * 4);
       if (L.vis < 0.01) { L.el.style.opacity = 0; return; }
       anchorOnTower(L.t); _v.project(camera);
@@ -776,19 +830,29 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
       L.el.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)';
     });
 
-    bloom.strength = 0.42 * (1 - 0.4 * scrollK);
+    bloom.strength = 0.42 + bump * 0.55;
   }
 
   /* ── Loop ─────────────────────────────────────────────────────────────── */
-  let t0 = performance.now(), last = t0, running = false, inView = true, raf = 0, frames = 0, slowFrames = 0, started = false;
+  let t0 = performance.now(), last = t0, running = false, inView = true, raf = 0, frames = 0, slowFrames = 0;
+  let tSm = 0, trReal = 0;
   let manualT = qs.has('holo_t') ? parseFloat(qs.get('holo_t')) : null;
 
   function tick(now) {
     raf = 0;
     if (!running) return;
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    const t = manualT != null ? manualT : (now - t0) / 1000;
-    update(t, dt);
+    trReal = (now - t0) / 1000;
+    let t;
+    if (manualT != null) t = manualT;
+    else {
+      const p = progress();
+      applyScrollUI(p);
+      const target = Math.max(Math.min(INTRO, trReal), INTRO + p * (T_END - INTRO) - (p > 0 ? 0 : 0));
+      tSm += (target - tSm) * (1 - Math.exp(-dt * 7));
+      t = tSm;
+    }
+    update(t, dt, trReal);
     composer.render();
     frames++;
     if (frames > 20 && frames < 140 && dt > 0.034) slowFrames++;
@@ -799,11 +863,11 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
   function schedule() { if (!raf && running && inView && !document.hidden) raf = requestAnimationFrame(tick); }
   function start() { if (running) return; running = true; last = performance.now(); schedule(); }
 
-  new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) { last = performance.now(); schedule(); } }, { threshold: 0.01 }).observe(root);
+  new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) { last = performance.now(); schedule(); } }, { threshold: 0 }).observe(runway);
   document.addEventListener('visibilitychange', () => { last = performance.now(); schedule(); });
 
   const replayBtn = root.querySelector('.holo-replay');
-  if (replayBtn) replayBtn.addEventListener('click', () => { t0 = performance.now(); lastPct = -1; manualT = null; });
+  if (replayBtn) replayBtn.addEventListener('click', () => runway.scrollIntoView({ behavior: 'smooth' }));
 
   resize();
   if (reduced) {
@@ -813,12 +877,16 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
     root.classList.add('holo--ready', 'holo--static');
     window.addEventListener('resize', () => { update(manualT, 0.016); composer.render(); });
   } else {
-    update(manualT != null ? manualT : 0, 0.016);
+    update(manualT != null ? manualT : 0, 0.016, 0);
     composer.render();
     root.classList.add('holo--ready');
+    if (manualT == null) applyScrollUI(progress());
     start();
   }
 
-  // utilitário de depuração (?holo_t=4 congela no instante; window.__holo.seek(t))
-  window.__holo = { settle(t) { manualT = t; for (let i = 0; i < 80; i++) update(t, 0.05); composer.render(); }, seek(t) { manualT = t; update(t, 0.016); composer.render(); }, replay() { t0 = performance.now(); manualT = null; lastPct = -1; start(); schedule(); } };
+  // depuração: ?holo_t=4 congela no instante; window.__holo.settle(t) / .seek(t)
+  window.__holo = {
+    settle(t) { manualT = t; for (let i = 0; i < 80; i++) update(t, 0.05, t); composer.render(); },
+    seek(t) { manualT = t; update(t, 0.016, t); composer.render(); },
+  };
 })();
